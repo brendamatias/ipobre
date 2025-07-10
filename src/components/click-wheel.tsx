@@ -64,14 +64,14 @@ const ClickWheel = ({
   return (
     <div className="relative rounded-full bg-[#fefefe] h-[245px] w-[245px] flex items-center justify-center">
       <button
-        className="absolute top-6 text-[#7F7F7F] text-sm font-medium cursor-pointer"
+        className="absolute top-4 text-[#7F7F7F] text-sm font-medium cursor-pointer active:scale-95 active:bg-gray-200 transition-transform rounded-full h-12 w-12"
         onClick={onMenu}
       >
         MENU
       </button>
 
       <button
-        className="absolute left-6 cursor-pointer"
+        className="flex items-center justify-center absolute left-4 cursor-pointer active:scale-95 active:bg-gray-200 transition-transform rounded-full h-12 w-12"
         onMouseDown={() => handleSeekStart("backward")}
         onTouchStart={() => handleSeekStart("backward")}
         onMouseUp={handleSeekStop}
@@ -81,7 +81,7 @@ const ClickWheel = ({
       </button>
 
       <button
-        className="absolute right-6 cursor-pointer"
+        className="flex items-center justify-center absolute right-4 cursor-pointer active:scale-95 active:bg-gray-200 transition-transform rounded-full h-12 w-12"
         onMouseDown={() => handleSeekStart("forward")}
         onTouchStart={() => handleSeekStart("forward")}
         onMouseUp={handleSeekStop}
@@ -91,7 +91,7 @@ const ClickWheel = ({
       </button>
 
       <button
-        className="absolute bottom-6 cursor-pointer"
+        className="flex items-center justify-center absolute bottom-4 cursor-pointer active:scale-95 active:bg-gray-200 transition-transform rounded-full h-12 w-12"
         onClick={onPlayPause}
       >
         <PlayPauseIcon />
