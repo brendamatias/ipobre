@@ -71,8 +71,33 @@ export const Home = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (screen === "menu") {
+        if (e.key === "ArrowRight") {
+          setScreen("player");
+          setIsPlaying(true);
+        }
+      } else {
+        if (e.key === "ArrowRight") {
+          playNext();
+        } else if (e.key === "ArrowLeft") {
+          playPrevious();
+        } else if (e.key === "ArrowDown") {
+          togglePlayPause();
+        } else if (e.key === "ArrowUp") {
+          setScreen("menu");
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [screen, playNext, playPrevious, togglePlayPause]);
+
   return (
     <div
+      tabIndex={0}
       className="flex justify-between items-center gap-4 flex-col w-[353px] h-[584px] rounded-[28px] px-9 py-8"
       style={{
         background:
