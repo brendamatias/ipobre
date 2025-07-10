@@ -1,8 +1,8 @@
-<h1 align="center">🕹️ Nome do projeto</h1>
-<p align="center">Breve descrição.</p>
+<h1 align="center">🎧 iPod Player</h1>
+<p align="center">Reprodução de músicas com visual retrô inspirado no clássico iPod.</p>
 
 <p align="center">
-  🔗 <a href="https://url" target="_blank"><strong>Visualizar projeto</strong></a>
+  🔗 <a href="http://ipobre.codaki.com.br" target="_blank"><strong>Visualizar projeto</strong></a>
 </p>
 
 ---
@@ -35,10 +35,10 @@
 
 ```bash
 # Clone o repositório
-git clone https://github.com/brendamatias/seu-projeto.git
+git clone https://github.com/brendamatias/ipobre.git
 
 # Acesse a pasta do projeto
-cd seu-projeto
+cd ipobre
 
 # Instale as dependências
 npm install
