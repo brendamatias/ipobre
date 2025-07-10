@@ -29,6 +29,13 @@ export const Home = () => {
     setIsPlaying(true);
   };
 
+  const onSeek = (time: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
@@ -88,6 +95,7 @@ export const Home = () => {
           setIsPlaying(true);
           setScreen("player");
         }}
+        onSeek={onSeek}
       />
 
       <ClickWheel

@@ -23,6 +23,7 @@ interface PlayerDisplayProps {
   isPlaying: boolean;
   selectedRef: React.RefObject<HTMLLIElement | null>;
   onSelectSong: (index: number) => void;
+  onSeek: (time: number) => void;
 }
 
 const PlayerDisplay = ({
@@ -35,6 +36,7 @@ const PlayerDisplay = ({
   isPlaying,
   selectedRef,
   onSelectSong,
+  onSeek,
 }: PlayerDisplayProps) => {
   return (
     <div className="bg-white border-[6px] border-black rounded-2xl overflow-hidden h-[226px] w-full">
@@ -63,6 +65,7 @@ const PlayerDisplay = ({
           songs={songs}
           currentTime={currentTime}
           duration={duration}
+          onSeek={onSeek}
         />
       )}
     </div>
@@ -116,6 +119,7 @@ interface PlayerProps {
   currentIndex: number;
   currentTime: number;
   duration: number;
+  onSeek: (time: number) => void;
 }
 
 const Player = ({
@@ -124,6 +128,7 @@ const Player = ({
   songs,
   currentTime,
   duration,
+  onSeek,
 }: PlayerProps) => {
   return (
     <div className="flex flex-col justify-between h-full max-h-[170px] gap-2 px-3 py-2 text-black">
@@ -146,7 +151,11 @@ const Player = ({
         </div>
       </div>
 
-      <ProgressBar currentTime={currentTime} duration={duration} />
+      <ProgressBar
+        currentTime={currentTime}
+        duration={duration}
+        onSeek={onSeek}
+      />
     </div>
   );
 };
