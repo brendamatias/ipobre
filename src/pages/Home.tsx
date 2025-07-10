@@ -7,10 +7,27 @@ export const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const selectedRef = useRef<HTMLLIElement | null>(null);
 
   const currentSong = songs[currentIndex];
+
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => !prev);
+  };
+
+  const playNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % songs.length);
+    setIsPlaying(true);
+  };
+
+  const playPrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + songs.length) % songs.length);
+    setIsPlaying(true);
+  };
 
   useEffect(() => {
     if (audioRef.current) {
@@ -31,19 +48,21 @@ export const Home = () => {
     }
   }, [currentIndex]);
 
-  const togglePlayPause = () => {
-    setIsPlaying((prev) => !prev);
-  };
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
-  const playNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % songs.length);
-    setIsPlaying(true);
-  };
+    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const handleLoadedMetadata = () => setDuration(audio.duration);
 
-  const playPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + songs.length) % songs.length);
-    setIsPlaying(true);
-  };
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+    return () => {
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+    };
+  }, []);
 
   return (
     <div
@@ -62,6 +81,8 @@ export const Home = () => {
         currentIndex={currentIndex}
         isPlaying={isPlaying}
         selectedRef={selectedRef}
+        currentTime={currentTime}
+        duration={duration}
         onSelectSong={(i) => {
           setCurrentIndex(i);
           setIsPlaying(true);

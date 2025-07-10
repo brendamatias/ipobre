@@ -3,6 +3,7 @@ import PlayIcon from "@/assets/play.svg?react";
 import PauseIcon from "@/assets/pause.svg?react";
 import ArrowRightIcon from "@/assets/arrow-right.svg?react";
 import BatteryIcon from "@/assets/battery.svg?react";
+import { ProgressBar } from ".";
 
 interface Song {
   name: string;
@@ -14,6 +15,8 @@ interface Song {
 
 interface PlayerDisplayProps {
   currentSong: Song;
+  currentTime: number;
+  duration: number;
   screen: "menu" | "player";
   songs: Song[];
   currentIndex: number;
@@ -23,6 +26,8 @@ interface PlayerDisplayProps {
 }
 
 const PlayerDisplay = ({
+  currentTime,
+  duration,
   currentSong,
   screen,
   songs,
@@ -56,6 +61,8 @@ const PlayerDisplay = ({
           currentIndex={currentIndex}
           currentSong={currentSong}
           songs={songs}
+          currentTime={currentTime}
+          duration={duration}
         />
       )}
     </div>
@@ -107,9 +114,17 @@ interface PlayerProps {
   currentSong: Song;
   songs: Song[];
   currentIndex: number;
+  currentTime: number;
+  duration: number;
 }
 
-const Player = ({ currentIndex, currentSong, songs }: PlayerProps) => {
+const Player = ({
+  currentIndex,
+  currentSong,
+  songs,
+  currentTime,
+  duration,
+}: PlayerProps) => {
   return (
     <div className="flex flex-col justify-between h-full max-h-[170px] gap-2 px-3 py-2 text-black">
       <div className="flex flex-col gap-2">
@@ -131,9 +146,7 @@ const Player = ({ currentIndex, currentSong, songs }: PlayerProps) => {
         </div>
       </div>
 
-      <div className="w-full h-[6px] bg-gray-300 rounded-full mt-2">
-        <div className="h-full bg-blue-500 w-[40%] rounded-full" />
-      </div>
+      <ProgressBar currentTime={currentTime} duration={duration} />
     </div>
   );
 };
