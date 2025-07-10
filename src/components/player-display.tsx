@@ -140,7 +140,7 @@ const Player = ({
           <img
             src={currentSong.cover}
             alt={currentSong.name}
-            className="w-[80px] h-[80px] object-cover border border-[#999]"
+            className="w-[80px] h-[80px] min-w-[80px] min-h-[80px] object-cover border border-[#999]"
           />
 
           <div className="text-xs flex flex-col gap-1.5 w-full">
