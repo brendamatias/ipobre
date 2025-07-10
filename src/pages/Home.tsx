@@ -12,6 +12,7 @@ export const Home = () => {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const selectedRef = useRef<HTMLLIElement | null>(null);
+  const seekIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentSong = songs[currentIndex];
 
@@ -33,6 +34,27 @@ export const Home = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
+    }
+  };
+
+  const startSeeking = (direction: Direction) => {
+    if (!audioRef.current) return;
+
+    const seek = () => {
+      if (!audioRef.current) return;
+      audioRef.current.currentTime += direction === "forward" ? 2 : -2;
+      setCurrentTime(audioRef.current.currentTime);
+    };
+
+    seek();
+
+    seekIntervalRef.current = setInterval(seek, 200);
+  };
+
+  const stopSeeking = () => {
+    if (seekIntervalRef.current) {
+      clearInterval(seekIntervalRef.current);
+      seekIntervalRef.current = null;
     }
   };
 
@@ -130,6 +152,9 @@ export const Home = () => {
         onNext={playNext}
         onPrevious={playPrevious}
         onMenu={() => setScreen("menu")}
+        onSeekStart={startSeeking}
+        onSeekStop={stopSeeking}
+        isSeekable={screen === "player"}
       />
     </div>
   );
