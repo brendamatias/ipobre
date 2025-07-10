@@ -16,27 +16,30 @@ const ProgressBar = ({ currentTime, duration, onSeek }: ProgressBarProps) => {
   const activeTime = isDragging ? previewTime : currentTime;
   const percent = duration ? (activeTime / duration) * 100 : 0;
 
-  const getTimeFromEvent = (e: MouseEvent | React.MouseEvent) => {
+  const getTimeFromPointer = (
+    e: MouseEvent | TouchEvent | React.MouseEvent | React.TouchEvent
+  ) => {
     const rect = barRef.current?.getBoundingClientRect();
     if (!rect) return 0;
-    const x = e.clientX - rect.left;
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const x = clientX - rect.left;
     const clampedX = Math.max(0, Math.min(x, rect.width));
     return (clampedX / rect.width) * duration;
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const startDrag = (e: React.MouseEvent | React.TouchEvent) => {
     setIsDragging(true);
-    const newTime = getTimeFromEvent(e);
+    const newTime = getTimeFromPointer(e);
     setPreviewTime(newTime);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const moveDrag = (e: MouseEvent | TouchEvent) => {
     if (!isDragging) return;
-    const newTime = getTimeFromEvent(e);
+    const newTime = getTimeFromPointer(e);
     setPreviewTime(newTime);
   };
 
-  const handleMouseUp = () => {
+  const endDrag = () => {
     if (isDragging) {
       setIsDragging(false);
       onSeek(previewTime);
@@ -45,16 +48,22 @@ const ProgressBar = ({ currentTime, duration, onSeek }: ProgressBarProps) => {
 
   useEffect(() => {
     if (isDragging) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("mousemove", moveDrag);
+      window.addEventListener("mouseup", endDrag);
+      window.addEventListener("touchmove", moveDrag);
+      window.addEventListener("touchend", endDrag);
     } else {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", moveDrag);
+      window.removeEventListener("mouseup", endDrag);
+      window.removeEventListener("touchmove", moveDrag);
+      window.removeEventListener("touchend", endDrag);
     }
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", moveDrag);
+      window.removeEventListener("mouseup", endDrag);
+      window.removeEventListener("touchmove", moveDrag);
+      window.removeEventListener("touchend", endDrag);
     };
   }, [isDragging, previewTime]);
 
@@ -63,7 +72,8 @@ const ProgressBar = ({ currentTime, duration, onSeek }: ProgressBarProps) => {
       <div
         ref={barRef}
         className="w-full h-[6px] bg-gray-300 rounded-full cursor-pointer"
-        onMouseDown={handleMouseDown}
+        onMouseDown={startDrag}
+        onTouchStart={startDrag}
       >
         <div
           className="h-full bg-blue-500 rounded-full"
