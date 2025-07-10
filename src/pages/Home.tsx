@@ -1,25 +1,49 @@
-import { cn } from "@/lib";
-import { useState } from "react";
-import PlayPauseIcon from "@/assets/play-pause.svg?react";
-import NextIcon from "@/assets/next.svg?react";
-import PreviousIcon from "@/assets/previous.svg?react";
-import PlayIcon from "@/assets/play.svg?react";
-import PauseIcon from "@/assets/pause.svg?react";
-import ArrowRightIcon from "@/assets/arrow-right.svg?react";
-import BatteryIcon from "@/assets/battery.svg?react";
-
-const songs = [
-  "Dove - Pillar point",
-  "Clocks",
-  "Space song",
-  "La Vie En Rose",
-  "Lorem",
-  "Lorem 2",
-];
+import { useEffect, useRef, useState } from "react";
+import { PlayerDisplay, ClickWheel } from "@/components";
+import { songs } from "@/data";
 
 export const Home = () => {
-  const [song, setSong] = useState(songs[0]);
+  const [screen, setScreen] = useState<"menu" | "player">("menu");
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const selectedRef = useRef<HTMLLIElement | null>(null);
+
+  const currentSong = songs[currentIndex];
+
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying, currentIndex]);
+
+  useEffect(() => {
+    if (selectedRef.current) {
+      selectedRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [currentIndex]);
+
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => !prev);
+  };
+
+  const playNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % songs.length);
+    setIsPlaying(true);
+  };
+
+  const playPrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + songs.length) % songs.length);
+    setIsPlaying(true);
+  };
 
   return (
     <div
@@ -29,66 +53,28 @@ export const Home = () => {
           "linear-gradient(90deg, #BFBFBF 0%, #CECECE 32.97%, #CECECE 64.85%, #AFAFAF 100%)",
       }}
     >
-      <div className="bg-white border-[6px] border-black rounded-2xl overflow-hidden h-[226px] w-full">
-        <div className="bg-[#DEE1E0] px-3 py-2.5 h-[32px] flex items-center justify-between gap-4">
-          <span className="text-xs">Songs</span>
+      <audio ref={audioRef} src={currentSong.file} />
 
-          <div className="flex gap-2.5 items-center">
-            {isPlaying ? <PauseIcon /> : <PlayIcon />}
-            <BatteryIcon />
-          </div>
-        </div>
+      <PlayerDisplay
+        currentSong={currentSong}
+        screen={screen}
+        songs={songs}
+        currentIndex={currentIndex}
+        isPlaying={isPlaying}
+        selectedRef={selectedRef}
+        onSelectSong={(i) => {
+          setCurrentIndex(i);
+          setIsPlaying(true);
+          setScreen("player");
+        }}
+      />
 
-        <ul className="overflow-auto max-h-[170px] pr-1 -mr-1">
-          {songs.map((item) => (
-            <li
-              key={item}
-              className={cn(
-                "h-[34px] px-3 py-2 flex justify-between gap-4 items-center text-xs cursor-pointer",
-                song === item ? "text-white" : "text-black"
-              )}
-              style={{
-                background:
-                  song === item
-                    ? "linear-gradient(180deg, #3AABEB 0%, #317EB6 100%)"
-                    : "transparent",
-              }}
-              onClick={() => setSong(item)}
-            >
-              {item}
-
-              {item === song && <ArrowRightIcon />}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="relative rounded-full bg-[#fefefe] h-[245px] w-[245px] flex items-center justify-center">
-        <span className="absolute top-6 text-[#7F7F7F] text-sm font-medium">
-          MENU
-        </span>
-        <span className="absolute left-6">
-          <PreviousIcon />
-        </span>
-        <span className="absolute right-6">
-          <NextIcon />
-        </span>
-
-        <button
-          className="absolute bottom-6 cursor-pointer"
-          onClick={(prev) => setIsPlaying(!prev)}
-        >
-          <PlayPauseIcon />
-        </button>
-
-        <div
-          className="w-[100px] h-[100px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(166.67% 166.67% at 50.27% 0%, #C1C1C1 0%, #ECECEC 51.56%, #ACACAC 100%)",
-          }}
-        />
-      </div>
+      <ClickWheel
+        onPlayPause={togglePlayPause}
+        onNext={playNext}
+        onPrevious={playPrevious}
+        onMenu={() => setScreen("menu")}
+      />
     </div>
   );
 };
