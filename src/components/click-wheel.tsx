@@ -42,8 +42,6 @@ const ClickWheel = ({
   const handleSeekStop = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
 
-    const pressTime = Date.now() - pressStartTimeRef.current;
-
     if (seekTimeout.current) {
       clearTimeout(seekTimeout.current);
       seekTimeout.current = null;
